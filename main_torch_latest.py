@@ -268,6 +268,9 @@ def main(train_loader, valid_loader, test_loader):
     print(f'Test Instances: {len(test_loader.dataset)}')
     print('MODEL')
     print(seq2seq)
+    print('\n------------------------\n')
+    print(f'{torch.cuda.is_available()}')
+
     if CurriculumModelID > 0:
         model_file = 'save_weights/seq2seq-' + str(CurriculumModelID) +'.model'
         #model_file = 'save_weights/words/seq2seq-' + str(CurriculumModelID) +'.model'
