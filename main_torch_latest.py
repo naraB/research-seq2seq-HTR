@@ -189,7 +189,8 @@ def train(train_loader, seq2seq, opt, teacher_rate, epoch):
         opt.zero_grad()
         loss.backward()
         opt.step()
-        total_loss += loss.data[0]
+        total_loss += loss.item()
+        print(f'Batch {num} loss: {loss.item()}')
 
     total_loss /= (num+1)
     return total_loss
@@ -212,7 +213,7 @@ def valid(valid_loader, seq2seq, epoch):
             loss_t = F.cross_entropy(output_t.view(-1, vocab_size),
                                  test_label, ignore_index=tokens['PAD_TOKEN'])
 
-        total_loss_t += loss_t.data[0]
+        total_loss_t += loss_t.item()
 
         if 'n04-015-00-01,171' in test_index:
             b = test_index.tolist().index('n04-015-00-01,171')
@@ -246,7 +247,7 @@ def test(test_loader, modelID, showAttn=True):
             loss_t = F.cross_entropy(output_t.view(-1, vocab_size),
                                 test_label, ignore_index=tokens['PAD_TOKEN'])
 
-        total_loss_t += loss_t.data[0]
+        total_loss_t += loss_t.item()
 
         if showAttn:
             global_index_t = 0
@@ -262,6 +263,11 @@ def main(train_loader, valid_loader, test_loader):
     encoder = Encoder(HIDDEN_SIZE_ENC, HEIGHT, WIDTH, Bi_GRU, CON_STEP, FLIP).cuda()
     decoder = Decoder(HIDDEN_SIZE_DEC, EMBEDDING_SIZE, vocab_size, Attention, TRADEOFF_CONTEXT_EMBED).cuda()
     seq2seq = Seq2Seq(encoder, decoder, output_max_len, vocab_size).cuda()
+    print(f'Train Instances: {len(train_loader.dataset)}')
+    print(f'Validation Instances: {len(valid_loader.dataset)}')
+    print(f'Test Instances: {len(test_loader.dataset)}')
+    print('MODEL')
+    print(seq2seq)
     if CurriculumModelID > 0:
         model_file = 'save_weights/seq2seq-' + str(CurriculumModelID) +'.model'
         #model_file = 'save_weights/words/seq2seq-' + str(CurriculumModelID) +'.model'
@@ -285,7 +291,7 @@ def main(train_loader, valid_loader, test_loader):
             scheduler.step()
     else:
         start_epoch = 0
-
+    print('Starting Training')
     for epoch in range(start_epoch, epochs):
         scheduler.step()
         lr = scheduler.get_lr()[0]
