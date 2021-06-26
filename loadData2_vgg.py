@@ -68,7 +68,7 @@ class IAM_words(D.Dataset):
             subdir = 'lines/'
         url = baseDir + subdir + file_name + '.png'
         img = cv2.imread(url, 0)
-        if not img:
+        if img is None:
             print('###!Cannot find image: ' + url)
         if RM_BACKGROUND:
             img[img>thresh] = 255
