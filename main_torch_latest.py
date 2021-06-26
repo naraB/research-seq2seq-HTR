@@ -299,7 +299,7 @@ def main(train_loader, valid_loader, test_loader):
         start = time.time()
         loss = train(train_loader, seq2seq, opt, teacher_rate, epoch)
         scheduler.step()
-        lr = scheduler.get_lr()[0]
+        lr = scheduler.get_last_lr()[0]
         writeLoss(loss, 'train')
         print('epoch %d/%d, loss=%.3f, lr=%.8f, teacher_rate=%.3f, time=%.3f' % (epoch, epochs, loss, lr, teacher_rate, time.time()-start))
 
